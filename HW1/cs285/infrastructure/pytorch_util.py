@@ -47,7 +47,10 @@ def build_mlp(
 
     # TODO: return a MLP. This should be an instance of nn.Module
     # Note: nn.Sequential is an instance of nn.Module.
-    raise NotImplementedError
+    
+
+    model = Net(input_size, output_size, size, n_layers, activation, output_activation)
+    return model
 
 
 device = None
@@ -73,3 +76,24 @@ def from_numpy(*args, **kwargs):
 
 def to_numpy(tensor):
     return tensor.to('cpu').detach().numpy()
+
+class Net(nn.Module):
+        def __init__(self, input_dim, output_dim, hidden_dim, n_layers, activation, output_activation):
+            super(Net, self).__init__()
+            self.input_dim = input_dim
+            self.output_dim = output_dim
+            self.hidden_dim = hidden_dim
+            self.activation = activation
+            self.output_activation = output_activation
+            current_dim = input_dim
+            self.layers = nn.ModuleList()
+            for _ in range(n_layers):
+                self.layers.append(nn.Linear(current_dim, hidden_dim))
+                current_dim = hidden_dim
+            self.layers.append(nn.Linear(current_dim, output_dim))
+
+        def forward(self, x):
+            for layer in self.layers[:-1]:
+                x = self.activation(layer(x))
+            out = self.output_activation(self.layers[-1](x))
+            return out    

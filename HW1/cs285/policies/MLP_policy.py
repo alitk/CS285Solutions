@@ -81,7 +81,7 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
             observation = obs[None]
 
         # TODO return the action that the policy prescribes
-        return forward(observation)
+        return self.logits_na(observation)
         raise NotImplementedError
 
     # update/train this policy
